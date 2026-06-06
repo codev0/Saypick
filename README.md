@@ -26,10 +26,13 @@ Translation runs through a local model (**Ollama**) for full privacy, or any **O
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/read.png" alt="Translation popup over selected text" width="430" />
-  &nbsp;&nbsp;
-  <img src="docs/screenshots/icon.png" alt="Floating translate icon next to a selection" width="330" />
-  <br/><sub><i>Read · select text for an instant translation popup, or a floating icon next to your selection.</i></sub>
+  <img src="docs/screenshots/translate.gif" alt="Select text and the translation streams into a popup" width="760" />
+  <br/><sub><i>Read · select text and the translation streams into a popup — Copy or Replace.</i></sub>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/icon.png" alt="Floating translate icon next to a selection" width="520" />
+  <br/><sub><i>Optional floating icon appears right next to your selection.</i></sub>
 </p>
 
 ---
