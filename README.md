@@ -10,8 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://everettjf.github.io/Translayr/">🌐 Website</a> ·
-  <a href="https://www.translayr.com">translayr.com</a>
+  <a href="https://everettjf.github.io/Translayr/">🌐 Website</a>
 </p>
 
 Translayr lives in your menu bar and works in **any** app. Two things, one shortcut each:
