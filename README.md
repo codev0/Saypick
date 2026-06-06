@@ -20,6 +20,18 @@ Translayr lives in your menu bar and works in **any** app. Two things, one short
 
 Translation runs through a local model (**Ollama**) for full privacy, or any **OpenAI-compatible** endpoint for speed.
 
+<p align="center">
+  <img src="docs/screenshots/rewrite.gif" alt="Type Chinese, press ⌥R, and it is rewritten into English in place" width="760" />
+  <br/><sub><i>Write · type in your language, press <kbd>⌥R</kbd>, and it’s rewritten in place.</i></sub>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/read.png" alt="Translation popup over selected text" width="430" />
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/icon.png" alt="Floating translate icon next to a selection" width="330" />
+  <br/><sub><i>Read · select text for an instant translation popup, or a floating icon next to your selection.</i></sub>
+</p>
+
 ---
 
 ## ✨ Features
