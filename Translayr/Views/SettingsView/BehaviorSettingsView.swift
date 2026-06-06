@@ -1,0 +1,57 @@
+//
+//  BehaviorSettingsView.swift
+//  Translayr
+//
+//  触发与改写行为设置。
+//
+
+import SwiftUI
+
+struct BehaviorSettingsView: View {
+    @AppStorage(AppSettings.Keys.selectionTrigger) private var selectionRaw = SelectionTrigger.none.rawValue
+    @AppStorage(AppSettings.Keys.rewritePreview) private var rewritePreview = false
+    @AppStorage(AppSettings.Keys.rewriteStyle) private var rewriteStyleRaw = RewriteStyle.faithful.rawValue
+    @AppStorage(AppSettings.Keys.readStyle) private var readStyleRaw = RewriteStyle.faithful.rawValue
+
+    var body: some View {
+        Form {
+            Section("Read · translate") {
+                Picker("After selecting text", selection: $selectionRaw) {
+                    ForEach(SelectionTrigger.allCases) { t in
+                        Text(t.displayName).tag(t.rawValue)
+                    }
+                }
+                .onChange(of: selectionRaw) { _, _ in
+                    TriggerController.shared.applyEnabledState()
+                }
+                Text("“Show floating icon” pops a small button next to your selection; “Auto-translate” shows the translation immediately. The shortcut always works regardless.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+                Picker("Style", selection: $readStyleRaw) {
+                    ForEach(RewriteStyle.allCases) { s in
+                        Text(s.displayName).tag(s.rawValue)
+                    }
+                }
+            }
+
+            Section("Rewrite") {
+                Toggle("Preview before replacing", isOn: $rewritePreview)
+                Text(rewritePreview
+                     ? "Rewrite shows the result in a popup; click Replace to apply."
+                     : "Rewrite replaces the text in place immediately (undo with ⌘Z).")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+                Picker("Style", selection: $rewriteStyleRaw) {
+                    ForEach(RewriteStyle.allCases) { s in
+                        Text(s.displayName).tag(s.rawValue)
+                    }
+                }
+            }
+        }
+        .formStyle(.grouped)
+        .padding()
+        .navigationTitle("Behavior")
+    }
+}
