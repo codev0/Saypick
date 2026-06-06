@@ -8,6 +8,7 @@ import SwiftUI
 struct GeneralSettingsView: View {
     @AppStorage(AppSettings.Keys.enabled) private var isEnabled = true
     @State private var hasPermission = AccessibilityPermission.isGranted
+    @State private var launchAtLogin = LaunchAtLogin.isEnabled
     @State private var permissionTimer: Timer?
 
     var body: some View {
@@ -16,6 +17,14 @@ struct GeneralSettingsView: View {
                 Toggle("Enable Translayr", isOn: $isEnabled)
                     .onChange(of: isEnabled) { _, _ in
                         TriggerController.shared.applyEnabledState()
+                    }
+
+                Toggle("Launch at login", isOn: $launchAtLogin)
+                    .onChange(of: launchAtLogin) { _, newValue in
+                        if !LaunchAtLogin.set(newValue) {
+                            // 失败时回滚到真实状态
+                            launchAtLogin = LaunchAtLogin.isEnabled
+                        }
                     }
 
                 HStack {

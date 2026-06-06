@@ -1,94 +1,39 @@
-# Translayr - Agent Guide
+# Translayr — Agent Guide
 
-<p align="center">
-  <a href="https://discord.com/invite/eGzEaP6TzR"><img src="https://img.shields.io/badge/Discord-Join-5865F2?logo=discord&logoColor=white" /></a>
-</p>
+macOS menu-bar app: **system-wide AI translation + inline rewrite**.
 
-## Project Focus
+- **Read**: select text → shortcut / floating icon / auto → translation popup.
+- **Write**: type in native language → shortcut → translated & replaced in place.
 
-Translayr is a macOS **system-wide intelligent translation assistant**. It monitors text input across apps via Accessibility APIs and provides instant translation and one-click replacement using local AI models (Ollama).
-
-## Core Capabilities
-
-- **Cross-app monitoring**: Real-time input capture + language detection
-- **Local translation**: Offline Ollama inference for privacy
-- **Floating UI**: Underline markers + translation popups
-- **Configurable**: Languages, colors, models, skip list
-
-## Architecture Overview
+## Architecture
 
 ```
-AccessibilityMonitor -> SpellCheckMonitor -> SpellService -> LocalModelClient
-                             │                    │
-                             └── OverlayWindow <--┘
+Shortcut / SelectionMonitor ─► SelectionCapture ─► TranslationService ─► provider
+                                      │                                     │
+                              PopupController / TextReplacer  ◄────── streamed result
 ```
 
-## Key Directories
+- `Core/` — `SelectionCapture` (AX `kAXSelectedText` + synthetic-⌘C fallback, restores clipboard), `TextReplacer` (synthetic paste, undo-safe), `TriggerController` (orchestrates read/write), `SelectionMonitor` (global mouse-up → AX selection), `PopupPositioner`, `Keyboard`, `Pasteboard`, `AccessibilityPermission`, `LaunchAtLogin`.
+- `Translation/` — `TranslationProvider` protocol; `OllamaProvider`, `OpenAIProvider` (SSE); `TranslationService` (routing + cache + style); `TranslationCache`; `OllamaModelResolver` (auto-pick installed model).
+- `UI/` — `TranslationPopupView` + `PopupController`, `SelectionIconWindow`.
+- `Config/` — `AppSettings` (single source of truth, UserDefaults-backed), `LanguageConfig`.
+- `Services/` — `GlobalShortcutCenter` (Carbon, multi-hotkey), `UpdateChecker`, `SystemServiceProvider`.
+- `Views/` — `MenuBarView`, `SettingsView/*` (General, Behavior, Backend, Language, Models, Shortcuts, Skip Apps, About).
 
-- `Translayr/Models/`: Suggestion and related models
-- `Translayr/Protocols/`: SpellAnalyzing protocol
-- `Translayr/Services/`: Monitoring, spell check, translation, updates
-- `Translayr/Views/`: OverlayWindow, MenuBarView, Settings
-- `TranslayrTests/`: Unit tests
-- `scripts/`: Release build, signing, notarization
+## Conventions & gotchas
 
-## Key Files
+- **No sandbox** (`Translayr.entitlements` empty) — needs Accessibility + CGEvent posting. `LSUIElement = true` (menu-bar only).
+- **Sign dev builds** (Apple Development team is configured) so the Accessibility grant persists across rebuilds; an unsigned/ad-hoc build’s grant won’t stick.
+- Carbon hotkeys fire without Accessibility, but capture/replace are guarded by `AccessibilityPermission.isGranted`.
+- Read direction: detected → `LanguageConfig.sourceLanguage` (native). Write: native → `targetLanguage`.
+- Settings via `@AppStorage(AppSettings.Keys.*)`; behavior changes call `TriggerController.shared.applyEnabledState()`.
 
-- `Translayr/Services/AccessibilityMonitor.swift`
-- `Translayr/Services/SpellCheckMonitor.swift`
-- `Translayr/Services/SpellService.swift`
-- `Translayr/Services/LocalModelClient.swift`
-- `Translayr/Views/OverlayWindow.swift`
-- `Translayr/Views/MenuBarView.swift`
-
-## Dev Environment
-
-- macOS 13.0+
-- Xcode 15.0+
-- Swift 5.9+
-- Ollama (local)
-
-## Common Commands
+## Build
 
 ```bash
-# Run
-open Translayr.xcodeproj
-
-# Debug build
-xcodebuild -scheme Translayr -configuration Debug
-
-# Version bump
-./scripts/increment-version.sh
-./scripts/increment-build.sh
-
-# Release build (sign + notarize)
-./scripts/build-release.sh
+xcodebuild -scheme Translayr -configuration Debug build   # signed
+./scripts/build-release.sh                                # notarized DMG (needs .env)
 ```
 
-## Tests
-
-- `TranslayrTests/SpellServiceTests.swift`
-- `TranslayrTests/SuggestionTests.swift`
-- `TranslayrTests/LocalModelClientTests.swift`
-
-Run tests in Xcode: `⌘ + U`.
-
-## Config Notes
-
-- Ollama default endpoint: `http://127.0.0.1:11434`
-- Model example: `qwen2.5:3b`
-- Settings are stored in `UserDefaults`
-
-## Known Limitations
-
-- Accessibility permission required to read other apps.
-- Some apps (e.g., certain Electron apps) may not expose precise text positions.
-- Password fields are not accessible by design.
-
-## Related Docs
-
-- `DOCUMENT.md`
-- `USAGE.md`
-- `SYSTEM_SERVICE.md`
-- `BUILD_RELEASE.md`
-- `QUICK_START.md`
+Backend: Ollama default `http://127.0.0.1:11434`; OpenAI-compatible base URL + key in settings.
+```
