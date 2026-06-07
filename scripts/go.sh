@@ -1,5 +1,6 @@
 #!/bin/sh
 
+set -e  # 任一步骤失败立即停止，避免在公证等步骤静默失败后仍打印成功横幅
 
 echo "Incrementing build number"
 ./scripts/increment-build.sh
