@@ -111,7 +111,7 @@ Translayr/
 open Translayr.xcodeproj        # ⌘R to run
 
 # Signed release + notarized DMG (configure .env from .env.template first)
-./scripts/build-release.sh      # → build/Translayr-<version>.dmg
+./scripts/build-release.sh      # → build/Translayr.dmg
 ```
 
 Requirements: macOS 13+, Xcode 15+. The app is **not** sandboxed (it needs Accessibility + synthetic key events). For local dev builds, sign with your Apple Development team so the Accessibility grant persists across rebuilds.
