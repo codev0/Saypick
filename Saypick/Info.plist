@@ -23,7 +23,7 @@
 	<key>LSUIElement</key>
 	<true/>
 	<key>NSAccessibilityUsageDescription</key>
-	<string>Saypick needs accessibility permission to monitor text input in other apps for real-time spell checking and translation suggestions.</string>
+	<string>Saypick needs accessibility permission to read your selected text and replace it in place when you translate or rewrite.</string>
 	<key>NSHumanReadableCopyright</key>
 	<string></string>
 	<key>NSPrincipalClass</key>
@@ -39,31 +39,10 @@
 			<key>NSMenuItem</key>
 			<dict>
 				<key>default</key>
-				<string>Translate to English (Saypick)</string>
+				<string>Translate with Saypick</string>
 			</dict>
 			<key>NSMessage</key>
-			<string>translateToEnglish</string>
-			<key>NSPortName</key>
-			<string>Saypick</string>
-			<key>NSReturnTypes</key>
-			<array>
-				<string>NSStringPboardType</string>
-				<string>public.utf8-plain-text</string>
-			</array>
-			<key>NSSendTypes</key>
-			<array>
-				<string>NSStringPboardType</string>
-				<string>public.utf8-plain-text</string>
-			</array>
-		</dict>
-		<dict>
-			<key>NSMenuItem</key>
-			<dict>
-				<key>default</key>
-				<string>Get Translation Suggestions (Saypick)</string>
-			</dict>
-			<key>NSMessage</key>
-			<string>getTranslationSuggestions</string>
+			<string>translateSelection</string>
 			<key>NSPortName</key>
 			<string>Saypick</string>
 			<key>NSReturnTypes</key>

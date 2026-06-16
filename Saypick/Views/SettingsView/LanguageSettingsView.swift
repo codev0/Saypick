@@ -16,7 +16,7 @@ struct LanguageSettingsView: View {
     var body: some View {
         Form {
             Section {
-                Text("Select which language Saypick should detect and translate")
+                Text("Choose which languages Saypick translates between")
                     .font(.callout)
                     .foregroundColor(.secondary)
             }
@@ -38,7 +38,7 @@ struct LanguageSettingsView: View {
                         .foregroundColor(.blue)
                         .font(.callout)
 
-                    Text("Saypick will detect \(selectedLanguage.displayName) text in other applications")
+                    Text("Saypick translates the \(selectedLanguage.displayName) text you select")
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -86,7 +86,7 @@ struct LanguageSettingsView: View {
                             .foregroundColor(.blue)
                             .font(.callout)
 
-                        Text("Detected text will be translated to \(selectedTargetLanguage.displayName)")
+                        Text("Selected text will be translated to \(selectedTargetLanguage.displayName)")
                             .font(.caption)
                             .foregroundColor(.secondary)
                             .fixedSize(horizontal: false, vertical: true)
@@ -112,9 +112,9 @@ struct LanguageSettingsView: View {
                             .foregroundColor(.blue)
                             .font(.title3)
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Detection")
+                            Text("Select")
                                 .font(.callout.weight(.semibold))
-                            Text("Saypick monitors text in other applications and detects \(selectedLanguage.displayName) characters")
+                            Text("Select text in any app, then trigger Saypick by shortcut, the floating icon, or auto-translate on selection")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -125,9 +125,9 @@ struct LanguageSettingsView: View {
                             .foregroundColor(.green)
                             .font(.title3)
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Translation")
+                            Text("Translate")
                                 .font(.callout.weight(.semibold))
-                            Text("Detected text is translated to \(selectedTargetLanguage.displayName) using your selected AI model")
+                            Text("Saypick translates it to \(selectedTargetLanguage.displayName) using your selected AI model")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -138,9 +138,9 @@ struct LanguageSettingsView: View {
                             .foregroundColor(.purple)
                             .font(.title3)
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Underline & Click")
+                            Text("Read or rewrite")
                                 .font(.callout.weight(.semibold))
-                            Text("Detected text is underlined. Click to see the translation in a popup")
+                            Text("See the translation in a popup, or rewrite your own text in place ready to send")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }

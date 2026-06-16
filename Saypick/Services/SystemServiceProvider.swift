@@ -19,19 +19,14 @@ class SystemServiceProvider: NSObject {
 
     // MARK: - Service Methods
 
-    /// 翻译选中文本到目标外语并写回剪贴板。
-    @objc func translateToEnglish(_ pasteboard: NSPasteboard, userData: String, error: AutoreleasingUnsafeMutablePointer<NSString>) {
+    /// 翻译选中文本到目标语言并写回剪贴板。
+    @objc func translateSelection(_ pasteboard: NSPasteboard, userData: String, error: AutoreleasingUnsafeMutablePointer<NSString>) {
         guard let selectedText = pasteboard.string(forType: .string) else { return }
         Task { @MainActor in
             let translation = await translate(selectedText)
             pasteboard.clearContents()
             pasteboard.setString(translation, forType: .string)
         }
-    }
-
-    /// 兼容旧 NSServices selector：行为同上。
-    @objc func getTranslationSuggestions(_ pasteboard: NSPasteboard, userData: String, error: AutoreleasingUnsafeMutablePointer<NSString>) {
-        translateToEnglish(pasteboard, userData: userData, error: error)
     }
 
     // MARK: - Helper

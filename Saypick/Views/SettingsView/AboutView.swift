@@ -63,7 +63,7 @@ struct AboutView: View {
                     .font(.headline)
                     .foregroundColor(.primary)
 
-                Text("Automatically detects and translates text in many applications using AI models")
+                Text("Select text to translate, or rewrite your own writing in place — in any app, powered by AI models")
                     .font(.body)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)

@@ -45,7 +45,7 @@ struct ModelsSettingsView: View {
 
         Form {
             Section {
-                Text("Select the AI model for Chinese to English translation")
+                Text("Select the AI model used for translation and rewriting")
                     .font(.callout)
                     .foregroundColor(.secondary)
             }
