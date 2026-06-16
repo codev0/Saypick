@@ -1,4 +1,4 @@
-# Translayr — Agent Guide
+# Saypick — Agent Guide
 
 macOS menu-bar app: **system-wide AI translation + inline rewrite**.
 
@@ -22,7 +22,7 @@ Shortcut / SelectionMonitor ─► SelectionCapture ─► TranslationService �
 
 ## Conventions & gotchas
 
-- **No sandbox** (`Translayr.entitlements` empty) — needs Accessibility + CGEvent posting. `LSUIElement = true` (menu-bar only).
+- **No sandbox** (`Saypick.entitlements` empty) — needs Accessibility + CGEvent posting. `LSUIElement = true` (menu-bar only).
 - **Sign dev builds** (Apple Development team is configured) so the Accessibility grant persists across rebuilds; an unsigned/ad-hoc build’s grant won’t stick.
 - Carbon hotkeys fire without Accessibility, but capture/replace are guarded by `AccessibilityPermission.isGranted`.
 - Read direction: detected → `LanguageConfig.sourceLanguage` (native). Write: native → `targetLanguage`.
@@ -31,7 +31,7 @@ Shortcut / SelectionMonitor ─► SelectionCapture ─► TranslationService �
 ## Build
 
 ```bash
-xcodebuild -scheme Translayr -configuration Debug build   # signed
+xcodebuild -scheme Saypick -configuration Debug build   # signed
 ./scripts/build-release.sh                                # notarized DMG (needs .env)
 ```
 

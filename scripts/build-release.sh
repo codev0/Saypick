@@ -40,7 +40,7 @@ warning() {
 }
 
 PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-PBXPROJ_PATH="$PROJECT_ROOT/Translayr.xcodeproj/project.pbxproj"
+PBXPROJ_PATH="$PROJECT_ROOT/Saypick.xcodeproj/project.pbxproj"
 
 # 检查 project.pbxproj 是否存在
 if [ ! -f "$PBXPROJ_PATH" ]; then
@@ -60,12 +60,12 @@ if [ -z "$BUILD_NUMBER" ]; then
 fi
 
 BUILD_DIR="$PROJECT_ROOT/build"
-ARCHIVE_PATH="$BUILD_DIR/Translayr.xcarchive"
+ARCHIVE_PATH="$BUILD_DIR/Saypick.xcarchive"
 EXPORT_DIR="$BUILD_DIR/export"
-APP_NAME="Translayr"
+APP_NAME="Saypick"
 APP_PATH="$EXPORT_DIR/$APP_NAME.app"
 
-info "Building Translayr version $VERSION (build $BUILD_NUMBER)"
+info "Building Saypick version $VERSION (build $BUILD_NUMBER)"
 info "Project root: $PROJECT_ROOT"
 
 # 加载环境变量
@@ -101,7 +101,7 @@ info "Step 2/6: Building archive..."
 cd "$PROJECT_ROOT"
 
 xcodebuild archive \
-    -scheme Translayr \
+    -scheme Saypick \
     -configuration Release \
     -archivePath "$ARCHIVE_PATH" \
     -destination "generic/platform=macOS" \
@@ -224,7 +224,7 @@ codesign --verify --deep --strict "$APP_PATH" && success "App signature is valid
 
 
 echo "Open release site"
-open https://github.com/xnuapp/TranslayrRelease/releases
+open https://github.com/xnuapp/SaypickRelease/releases
 
 # 完成
 echo ""

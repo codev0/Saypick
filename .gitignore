@@ -7,8 +7,8 @@ build/
 *.pkg
 
 # Xcode
-Translayr.xcodeproj/project.xcworkspace/xcuserdata
-Translayr.xcodeproj/project.xcworkspace/xcshareddata
+Saypick.xcodeproj/project.xcworkspace/xcuserdata
+Saypick.xcodeproj/project.xcworkspace/xcshareddata
 *.xcuserstate
 xcuserdata/
 DerivedData/

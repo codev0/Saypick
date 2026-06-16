@@ -4,8 +4,8 @@
 # 单独对已有的 .app 或 .dmg 进行签名和公证
 #
 # 使用方法:
-#   ./scripts/sign-and-notarize.sh /path/to/Translayr.app
-#   ./scripts/sign-and-notarize.sh /path/to/Translayr.dmg
+#   ./scripts/sign-and-notarize.sh /path/to/Saypick.app
+#   ./scripts/sign-and-notarize.sh /path/to/Saypick.dmg
 #
 
 set -e
@@ -24,7 +24,7 @@ warning() { echo -e "${YELLOW}⚠️  $1${NC}"; }
 
 # 检查参数
 if [ $# -eq 0 ]; then
-    error "Usage: $0 <path-to-app-or-dmg>\nExample: $0 build/export/Translayr.app"
+    error "Usage: $0 <path-to-app-or-dmg>\nExample: $0 build/export/Saypick.app"
 fi
 
 TARGET_PATH="$1"
@@ -96,7 +96,7 @@ if [ "$FILE_TYPE" == "app" ]; then
         fi
 
         create-dmg \
-            --volname "Translayr" \
+            --volname "Saypick" \
             --window-pos 200 120 \
             --window-size 600 400 \
             --icon-size 100 \
