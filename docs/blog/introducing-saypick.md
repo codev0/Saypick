@@ -82,4 +82,4 @@ It's **open source (MIT)**. If it saves you a few context switches a day, a 猸愶
 
 ---
 
-*Saypick 路 system-wide AI translation & inline rewrite for macOS 13+. [Website](https://everettjf.github.io/Saypick/) 路 [GitHub](https://github.com/everettjf/Saypick)*
+*Saypick 路 system-wide AI translation & inline rewrite for macOS 13+. [Website](https://everettjf.github.io/Saypick/) 路 [GitHub](https://github.com/everettjf/Saypick) 路 [涓枃鐗圿(introducing-saypick.zh.md)*
