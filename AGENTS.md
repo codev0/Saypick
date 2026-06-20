@@ -38,4 +38,3 @@ xcodebuild -scheme Saypick -configuration Debug build   # signed
 Backend: Ollama default `http://127.0.0.1:11434`; OpenAI-compatible base URL + key in settings.
 
 Releases ship as notarized DMGs on **GitHub Releases at `everettjf/Saypick`** (where `UpdateChecker` also checks). Keep `README.md` free of the app's release version — link to `../../releases` and refer to the build output as `build/Saypick.dmg`, never a pinned `X.Y.Z`. Platform/dependency versions (macOS 13+, Swift 5.9+, Xcode 15+) are fine.
-```
