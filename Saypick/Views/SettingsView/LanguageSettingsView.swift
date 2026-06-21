@@ -18,13 +18,7 @@ struct LanguageSettingsView: View {
     var body: some View {
         Form {
             Section {
-                Text("Choose which languages Saypick translates between")
-                    .font(.callout)
-                    .foregroundColor(.secondary)
-            }
-
-            Section("Source Language (Detect)") {
-                Picker("Select language", selection: $selectedLanguage) {
+                Picker("Native language", selection: $selectedLanguage) {
                     ForEach(Language.allCases) { language in
                         Text(language.displayName)
                             .tag(language)
@@ -35,20 +29,7 @@ struct LanguageSettingsView: View {
                     LanguageConfig.sourceLanguage = newLanguage
                 }
 
-                HStack(alignment: .top, spacing: 8) {
-                    Image(systemName: "info.circle")
-                        .foregroundColor(.blue)
-                        .font(.callout)
-
-                    Text("Saypick translates the \(selectedLanguage.displayName) text you select")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-            }
-
-            Section("Target Language (Translate to)") {
-                Picker("Select target language", selection: $selectedTargetLanguage) {
+                Picker("Foreign language", selection: $selectedTargetLanguage) {
                     ForEach(Language.allCases) { language in
                         Text(language.displayName)
                             .tag(language)
@@ -59,55 +40,32 @@ struct LanguageSettingsView: View {
                     LanguageConfig.targetLanguage = newLanguage
                 }
 
-                VStack(alignment: .leading, spacing: 8) {
-                    // Same language warning - prominent display
-                    if selectedLanguage == selectedTargetLanguage {
-                        HStack(alignment: .top, spacing: 8) {
-                            Image(systemName: "exclamationmark.triangle.fill")
+                if selectedLanguage == selectedTargetLanguage {
+                    HStack(alignment: .top, spacing: 10) {
+                        IconBadge(symbol: "exclamationmark.triangle.fill", color: .red, size: 20)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Same language selected")
+                                .font(.callout.weight(.semibold))
                                 .foregroundColor(.red)
-                                .font(.title3)
-
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Warning: Same Language Selected")
-                                    .font(.callout.weight(.semibold))
-                                    .foregroundColor(.red)
-
-                                Text("Source and target languages are both \(selectedLanguage.displayName). Translation may not work as expected.")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
+                            Text("Native and foreign are both \(selectedLanguage.shortName). Translation won't do anything useful.")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
                         }
-                        .padding()
-                        .background(Color.red.opacity(0.1))
-                        .cornerRadius(8)
                     }
-
-                    HStack(alignment: .top, spacing: 8) {
-                        Image(systemName: "info.circle")
-                            .foregroundColor(.blue)
-                            .font(.callout)
-
-                        Text("Selected text will be translated to \(selectedTargetLanguage.displayName)")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-
-                    HStack(alignment: .top, spacing: 8) {
-                        Image(systemName: "exclamationmark.triangle")
-                            .foregroundColor(.orange)
-                            .font(.callout)
-
-                        Text("Please ensure your selected AI model supports \(selectedLanguage.displayName) → \(selectedTargetLanguage.displayName) translation")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
+                    .padding(10)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.red.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                } else {
+                    SettingsNote(text: "Saypick translates between \(selectedLanguage.shortName) and \(selectedTargetLanguage.shortName). Make sure your AI model supports both.")
                 }
+            } header: {
+                SettingsSectionHeader(symbol: "globe", color: .green,
+                                      title: "Languages", subtitle: "Your native + foreign pair")
             }
 
-            Section("Translation Direction") {
+            Section {
                 Picker("⌥D Read (popup)", selection: $readDirection) {
                     ForEach(TranslationDirection.allCases) { dir in
                         Text(dir.label(native: selectedLanguage, foreign: selectedTargetLanguage))
@@ -130,19 +88,13 @@ struct LanguageSettingsView: View {
                     AppSettings.rewriteDirection = newValue
                 }
 
-                HStack(alignment: .top, spacing: 8) {
-                    Image(systemName: "info.circle")
-                        .foregroundColor(.blue)
-                        .font(.callout)
-
-                    Text("Auto detects the selected text's language and translates to the other one. Choose a fixed direction if you only ever translate one way, or if mixed-language text gets mis-detected.")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
+                SettingsNote(text: "Auto detects the selected text's language and translates to the other one. Choose a fixed direction if you only ever translate one way, or if mixed-language text gets mis-detected.")
+            } header: {
+                SettingsSectionHeader(symbol: "arrow.left.arrow.right.circle.fill", color: .orange,
+                                      title: "Translation Direction", subtitle: "Per shortcut · auto or fixed")
             }
 
-            Section("How It Works") {
+            Section {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack(alignment: .top, spacing: 12) {
                         Image(systemName: "1.circle.fill")
@@ -183,11 +135,11 @@ struct LanguageSettingsView: View {
                         }
                     }
                 }
+            } header: {
+                SettingsSectionHeader(symbol: "sparkles", color: .pink, title: "How It Works")
             }
 
         }
-        .formStyle(.grouped)
-        .padding()
-        .navigationTitle("Language")
+        .settingsPage("Language")
     }
 }

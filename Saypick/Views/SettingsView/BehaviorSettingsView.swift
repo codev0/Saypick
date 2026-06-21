@@ -15,7 +15,7 @@ struct BehaviorSettingsView: View {
 
     var body: some View {
         Form {
-            Section("Read · translate") {
+            Section {
                 Picker("After selecting text", selection: $selectionRaw) {
                     ForEach(SelectionTrigger.allCases) { t in
                         Text(t.displayName).tag(t.rawValue)
@@ -24,34 +24,36 @@ struct BehaviorSettingsView: View {
                 .onChange(of: selectionRaw) { _, _ in
                     TriggerController.shared.applyEnabledState()
                 }
-                Text("“Show floating icon” pops a small button next to your selection; “Auto-translate” shows the translation immediately. The shortcut always works regardless.")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                SettingsNote(text: "“Show floating icon” pops a small button next to your selection; “Auto-translate” shows the translation immediately. The shortcut always works regardless.")
 
                 Picker("Style", selection: $readStyleRaw) {
                     ForEach(RewriteStyle.allCases) { s in
                         Text(s.displayName).tag(s.rawValue)
                     }
                 }
+            } header: {
+                SettingsSectionHeader(symbol: "text.viewfinder", color: .blue,
+                                      title: "Read · translate", subtitle: "How ⌥D is triggered and styled")
             }
 
-            Section("Rewrite") {
-                Toggle("Preview before replacing", isOn: $rewritePreview)
-                Text(rewritePreview
-                     ? "Rewrite shows the result in a popup; click Replace to apply."
-                     : "Rewrite replaces the text in place immediately (undo with ⌘Z).")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+            Section {
+                Toggle(isOn: $rewritePreview) {
+                    SettingsLabel(symbol: "eye.fill", color: .teal, title: "Preview before replacing")
+                }
+                SettingsNote(text: rewritePreview
+                             ? "Rewrite shows the result in a popup; click Replace to apply."
+                             : "Rewrite replaces the text in place immediately (undo with ⌘Z).")
 
                 Picker("Style", selection: $rewriteStyleRaw) {
                     ForEach(RewriteStyle.allCases) { s in
                         Text(s.displayName).tag(s.rawValue)
                     }
                 }
+            } header: {
+                SettingsSectionHeader(symbol: "pencil.and.outline", color: .purple,
+                                      title: "Rewrite", subtitle: "How ⌥R applies the result")
             }
         }
-        .formStyle(.grouped)
-        .padding()
-        .navigationTitle("Behavior")
+        .settingsPage("Behavior")
     }
 }

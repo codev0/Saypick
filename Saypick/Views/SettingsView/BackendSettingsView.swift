@@ -16,40 +16,41 @@ struct BackendSettingsView: View {
 
     var body: some View {
         Form {
-            Section("Backend") {
+            Section {
                 Picker("Translation backend", selection: $backendRaw) {
                     ForEach(TranslationBackend.allCases) { backend in
                         Text(backend.displayName).tag(backend.rawValue)
                     }
                 }
                 .pickerStyle(.segmented)
+            } header: {
+                SettingsSectionHeader(symbol: "server.rack", color: .teal,
+                                      title: "Backend", subtitle: "Where translations are generated")
             }
 
             if backendRaw == TranslationBackend.openai.rawValue {
-                Section("OpenAI-compatible") {
+                Section {
                     TextField("Base URL", text: $openAIBaseURL)
                         .textFieldStyle(.roundedBorder)
                     SecureField("API Key", text: $openAIKey)
                         .textFieldStyle(.roundedBorder)
                     TextField("Model", text: $openAIModel)
                         .textFieldStyle(.roundedBorder)
-                    Text("Works with any OpenAI-compatible /chat/completions endpoint (official API, proxies, local servers).")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                    SettingsNote(text: "Works with any OpenAI-compatible /chat/completions endpoint (official API, proxies, local servers).")
+                } header: {
+                    SettingsSectionHeader(symbol: "cloud.fill", color: .indigo, title: "OpenAI-compatible")
                 }
             } else {
-                Section("Ollama") {
+                Section {
                     LabeledContent("Host", value: "\(OllamaConfig.host):\(OllamaConfig.port)")
                     TextField("Model", text: $ollamaModel)
                         .textFieldStyle(.roundedBorder)
-                    Text("Browse and pull models in the Ollama Models tab.")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                    SettingsNote(text: "Browse and pull models in the Ollama Models tab.")
+                } header: {
+                    SettingsSectionHeader(symbol: "desktopcomputer", color: .green, title: "Ollama (local)")
                 }
             }
         }
-        .formStyle(.grouped)
-        .padding()
-        .navigationTitle("Backend")
+        .settingsPage("Backend")
     }
 }

@@ -15,29 +15,28 @@ struct ShortcutsSettingsView: View {
     var body: some View {
         Form {
             Section {
-                Text("Set global shortcuts. They work in any app.")
-                    .font(.callout)
-                    .foregroundColor(.secondary)
-            }
-
-            Section("Shortcuts") {
-                ShortcutRecorderRow(title: "Translate selection", shortcut: $readShortcut) { new in
+                ShortcutRecorderRow(icon: "text.magnifyingglass", color: .blue,
+                                    title: "Translate selection", shortcut: $readShortcut) { new in
                     AppSettings.readShortcut = new
                     TriggerController.shared.applyEnabledState()
                 }
-                ShortcutRecorderRow(title: "Rewrite & replace", shortcut: $rewriteShortcut) { new in
+                ShortcutRecorderRow(icon: "arrow.left.arrow.right", color: .green,
+                                    title: "Rewrite & replace", shortcut: $rewriteShortcut) { new in
                     AppSettings.rewriteShortcut = new
                     TriggerController.shared.applyEnabledState()
                 }
+            } header: {
+                SettingsSectionHeader(symbol: "keyboard.fill", color: .pink,
+                                      title: "Shortcuts", subtitle: "Global · work in any app")
             }
         }
-        .formStyle(.grouped)
-        .padding()
-        .navigationTitle("Shortcuts")
+        .settingsPage("Shortcuts")
     }
 }
 
 private struct ShortcutRecorderRow: View {
+    let icon: String
+    var color: Color = .blue
     let title: String
     @Binding var shortcut: KeyboardShortcutPreference
     let onChange: (KeyboardShortcutPreference) -> Void
@@ -47,7 +46,7 @@ private struct ShortcutRecorderRow: View {
 
     var body: some View {
         HStack {
-            Text(title)
+            SettingsLabel(symbol: icon, color: color, title: title)
             Spacer()
             Button {
                 isRecording ? stop() : start()

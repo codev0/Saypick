@@ -45,12 +45,6 @@ struct ModelsSettingsView: View {
 
         Form {
             Section {
-                Text("Select the AI model used for translation and rewriting")
-                    .font(.callout)
-                    .foregroundColor(.secondary)
-            }
-
-            Section("Available Models") {
                 if isLoadingModels {
                     HStack(spacing: 12) {
                         ProgressView()
@@ -135,9 +129,12 @@ struct ModelsSettingsView: View {
                         }
                     }
                 }
+            } header: {
+                SettingsSectionHeader(symbol: "cpu", color: .orange,
+                                      title: "Available Models", subtitle: "The model used for translate & rewrite")
             }
 
-            Section("Ollama Setup") {
+            Section {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack(alignment: .top, spacing: 10) {
                         Image(systemName: hasLocalModels ? "checkmark.seal.fill" : "exclamationmark.triangle.fill")
@@ -167,11 +164,11 @@ struct ModelsSettingsView: View {
                     }
 
                 }
+            } header: {
+                SettingsSectionHeader(symbol: "shippingbox.fill", color: .indigo, title: "Ollama Setup")
             }
         }
-        .formStyle(.grouped)
-        .padding()
-        .navigationTitle("Models")
+        .settingsPage("Models")
         .task {
             await refreshModels()
         }

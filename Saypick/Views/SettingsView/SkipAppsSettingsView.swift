@@ -27,13 +27,10 @@ struct SkipAppsSettingsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Header
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Skip translation service for these applications")
-                    .font(.callout)
-                    .foregroundColor(.secondary)
-            }
-            .padding(.horizontal)
-            .padding(.top)
+            SettingsSectionHeader(symbol: "nosign", color: .red,
+                                  title: "Skip Apps", subtitle: "Disable Saypick in these applications")
+                .padding(.horizontal)
+                .padding(.top)
 
             Divider()
 

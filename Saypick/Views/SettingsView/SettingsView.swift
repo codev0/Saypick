@@ -16,12 +16,16 @@ struct SettingsView: View {
         NavigationSplitView {
             // Sidebar
             List(PreferencesSection.allCases, selection: $selection) { section in
-                Label(section.rawValue, systemImage: section.icon)
-                    .tag(section)
+                Label {
+                    Text(section.rawValue)
+                } icon: {
+                    IconBadge(symbol: section.icon, color: section.tint, size: 20)
+                }
+                .tag(section)
             }
             .listStyle(.sidebar)
             .navigationTitle("Saypick")
-            .frame(minWidth: 180)
+            .frame(minWidth: 190)
         } detail: {
             // Detail content
             switch selection {
