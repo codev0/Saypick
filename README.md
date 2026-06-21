@@ -2,7 +2,7 @@
 <p align="center"><b>System-wide AI translation &amp; inline rewrite for macOS</b></p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/macOS-13.0+-black.svg" />
+  <img src="https://img.shields.io/badge/macOS-26+-black.svg" />
   <img src="https://img.shields.io/badge/Swift-5.9+-orange.svg" />
   <img src="https://img.shields.io/badge/AI-Ollama%20%7C%20OpenAI--compatible-7c5cff.svg" />
   <img src="https://img.shields.io/badge/License-MIT-green.svg" />
@@ -129,7 +129,7 @@ open Saypick.xcodeproj        # ⌘R to run
 ./scripts/build-release.sh      # → build/Saypick.dmg
 ```
 
-Requirements: macOS 13+, Xcode 15+. The app is **not** sandboxed (it needs Accessibility + synthetic key events). For local dev builds, sign with your Apple Development team so the Accessibility grant persists across rebuilds.
+Requirements: macOS 26+, Xcode 15+. The app is **not** sandboxed (it needs Accessibility + synthetic key events). For local dev builds, sign with your Apple Development team so the Accessibility grant persists across rebuilds.
 
 ## 🔧 Troubleshooting
 
