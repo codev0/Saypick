@@ -12,6 +12,8 @@ import Ollama
 struct LanguageSettingsView: View {
     @State private var selectedLanguage = LanguageConfig.sourceLanguage
     @State private var selectedTargetLanguage = LanguageConfig.targetLanguage
+    @State private var readDirection = AppSettings.readDirection
+    @State private var rewriteDirection = AppSettings.rewriteDirection
 
     var body: some View {
         Form {
@@ -102,6 +104,41 @@ struct LanguageSettingsView: View {
                             .foregroundColor(.secondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
+                }
+            }
+
+            Section("Translation Direction") {
+                Picker("⌥D Read (popup)", selection: $readDirection) {
+                    ForEach(TranslationDirection.allCases) { dir in
+                        Text(dir.label(native: selectedLanguage, foreign: selectedTargetLanguage))
+                            .tag(dir)
+                    }
+                }
+                .pickerStyle(.menu)
+                .onChange(of: readDirection) { _, newValue in
+                    AppSettings.readDirection = newValue
+                }
+
+                Picker("⌥R Rewrite (replace in place)", selection: $rewriteDirection) {
+                    ForEach(TranslationDirection.allCases) { dir in
+                        Text(dir.label(native: selectedLanguage, foreign: selectedTargetLanguage))
+                            .tag(dir)
+                    }
+                }
+                .pickerStyle(.menu)
+                .onChange(of: rewriteDirection) { _, newValue in
+                    AppSettings.rewriteDirection = newValue
+                }
+
+                HStack(alignment: .top, spacing: 8) {
+                    Image(systemName: "info.circle")
+                        .foregroundColor(.blue)
+                        .font(.callout)
+
+                    Text("Auto detects the selected text's language and translates to the other one. Choose a fixed direction if you only ever translate one way, or if mixed-language text gets mis-detected.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
 

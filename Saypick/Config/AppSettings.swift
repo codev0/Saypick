@@ -83,6 +83,10 @@ enum AppSettings {
         static let readShortcut = "readShortcut"
         static let rewriteShortcut = "rewriteShortcut"
 
+        // 翻译方向（读 / 写 各自独立；默认 auto 双向）
+        static let readDirection = "readDirection"
+        static let rewriteDirection = "rewriteDirection"
+
         // 行为
         static let selectionTrigger = "selectionTrigger"
         static let rewritePreview = "rewritePreview"
@@ -132,6 +136,16 @@ enum AppSettings {
     static var rewriteShortcut: KeyboardShortcutPreference {
         get { shortcut(forKey: Keys.rewriteShortcut) ?? .init(keyCode: 15, modifiers: [.option]) } // ⌥R
         set { saveShortcut(newValue, forKey: Keys.rewriteShortcut) }
+    }
+
+    // MARK: 翻译方向
+    static var readDirection: TranslationDirection {
+        get { TranslationDirection(rawValue: d.string(forKey: Keys.readDirection) ?? "") ?? .auto }
+        set { d.set(newValue.rawValue, forKey: Keys.readDirection) }
+    }
+    static var rewriteDirection: TranslationDirection {
+        get { TranslationDirection(rawValue: d.string(forKey: Keys.rewriteDirection) ?? "") ?? .auto }
+        set { d.set(newValue.rawValue, forKey: Keys.rewriteDirection) }
     }
 
     // MARK: 行为

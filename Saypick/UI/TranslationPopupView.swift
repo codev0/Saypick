@@ -15,14 +15,19 @@ final class TranslationPopupModel: ObservableObject {
     @Published var translation: String = ""
     @Published var isLoading: Bool = true
     @Published var errorText: String?
+    /// 当前目标语言（弹窗顶部可改选，触发 onRetarget 重新翻译）
+    @Published var targetLanguage: Language
 
     /// 复制译文
     var onCopy: (() -> Void)?
     /// 替换原文（读模式可选；为 nil 时不显示）
     var onReplace: (() -> Void)?
+    /// 用户在弹窗里改选目标语言时回调（按新目标重新翻译）
+    var onRetarget: ((Language) -> Void)?
 
-    init(original: String) {
+    init(original: String, target: Language) {
         self.original = original
+        self.targetLanguage = target
     }
 }
 
@@ -54,6 +59,7 @@ struct TranslationPopupView: View {
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundColor(.secondary)
             Spacer()
+            targetMenu
             Button {
                 PopupController.shared.close()
             } label: {
@@ -65,6 +71,35 @@ struct TranslationPopupView: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 9)
+    }
+
+    /// 目标语言下拉：即时把当前译文重定向到任意语言（含第三种语言）
+    private var targetMenu: some View {
+        Menu {
+            ForEach(Language.allCases) { lang in
+                Button {
+                    guard lang != model.targetLanguage else { return }
+                    model.onRetarget?(lang)
+                } label: {
+                    if lang == model.targetLanguage {
+                        Label(lang.displayName, systemImage: "checkmark")
+                    } else {
+                        Text(lang.displayName)
+                    }
+                }
+            }
+        } label: {
+            HStack(spacing: 3) {
+                Image(systemName: "globe")
+                    .font(.system(size: 10))
+                Text(model.targetLanguage.shortName)
+                    .font(.system(size: 11, weight: .medium))
+            }
+            .foregroundColor(.secondary)
+        }
+        .menuStyle(.borderlessButton)
+        .menuIndicator(.hidden)
+        .fixedSize()
     }
 
     @ViewBuilder

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import NaturalLanguage
 
 /// 通用语言类型（用于检测和目标翻译）
 /// 世界上使用人数最多的10种语言
@@ -39,46 +40,9 @@ enum Language: String, CaseIterable, Identifiable {
         }
     }
 
-    /// 语言的 Unicode 正则表达式模式
-    var unicodePattern: String {
-        switch self {
-        case .english:
-            return "[a-zA-Z]" // 英语标准拉丁字母
-        case .chinese:
-            return "\\p{Han}" // 中文字符
-        case .hindi:
-            return "\\p{Devanagari}" // 天城文（印地语）
-        case .spanish:
-            return "[áéíóúüñÁÉÍÓÚÜÑ¿¡a-zA-Z]" // 西班牙语特殊字符
-        case .french:
-            return "[àâäæçéèêëïîôùûüÿœÀÂÄÆÇÉÈÊËÏÎÔÙÛÜŸŒa-zA-Z]" // 法语特殊字符
-        case .arabic:
-            return "\\p{Arabic}" // 阿拉伯字符
-        case .bengali:
-            return "\\p{Bengali}" // 孟加拉字符
-        case .russian:
-            return "\\p{Cyrillic}" // 西里尔字符
-        case .portuguese:
-            return "[áâãàçéêíóôõúüÁÂÃÀÇÉÊÍÓÔÕÚÜa-zA-Z]" // 葡萄牙语特殊字符
-        case .indonesian:
-            return "[a-zA-Z]" // 印尼语使用标准拉丁字母
-        }
-    }
-
-    /// 最小检测词组长度
-    var minWordLength: Int {
-        switch self {
-        case .chinese:
-            return 2
-        case .hindi, .bengali:
-            return 2
-        case .arabic, .russian:
-            return 3
-        case .spanish, .french, .portuguese:
-            return 3
-        case .english, .indonesian:
-            return 4 // 标准拉丁字母，需要更长的词来确定
-        }
+    /// 简短名（菜单/方向标签用）：取 displayName 中括号前的部分
+    var shortName: String {
+        displayName.components(separatedBy: " (").first ?? displayName
     }
 
     /// 翻译提示词模板
@@ -89,6 +53,49 @@ enum Language: String, CaseIterable, Identifiable {
         \(displayName): \(text)
         \(targetLanguage.displayName):
         """
+    }
+
+    /// 用 NaturalLanguage 检测文本的主语言，映射到我们支持的 10 种之一。
+    /// 文本为空、无法判断、或不在支持集合内时返回 nil（交由调用方走兜底方向）。
+    static func detect(in text: String) -> Language? {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+
+        let recognizer = NLLanguageRecognizer()
+        recognizer.processString(trimmed)
+        guard let dominant = recognizer.dominantLanguage else { return nil }
+
+        switch dominant {
+        case .english: return .english
+        case .simplifiedChinese, .traditionalChinese: return .chinese
+        case .hindi: return .hindi
+        case .spanish: return .spanish
+        case .french: return .french
+        case .arabic: return .arabic
+        case .bengali: return .bengali
+        case .russian: return .russian
+        case .portuguese: return .portuguese
+        case .indonesian: return .indonesian
+        default: return nil
+        }
+    }
+}
+
+/// 翻译方向模式（读 ⌥D / 写 ⌥R 各自独立配置）
+enum TranslationDirection: String, CaseIterable, Identifiable {
+    case auto              // 自动双向：检测选中文字语言，在母语/外语间互译
+    case nativeToForeign   // 固定：母语 → 外语（跳过检测）
+    case foreignToNative   // 固定：外语 → 母语（跳过检测）
+
+    var id: String { rawValue }
+
+    /// 依据当前配置的母语 / 外语生成可读标签
+    func label(native: Language, foreign: Language) -> String {
+        switch self {
+        case .auto: return "Auto · bidirectional"
+        case .nativeToForeign: return "\(native.shortName) → \(foreign.shortName)"
+        case .foreignToNative: return "\(foreign.shortName) → \(native.shortName)"
+        }
     }
 }
 

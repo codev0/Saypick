@@ -22,10 +22,10 @@ final class PopupController {
 
     /// 在锚点附近显示弹窗，返回可写入流式结果的 model。
     @discardableResult
-    func show(original: String, anchor: NSRect, onReplace: (() -> Void)?) -> TranslationPopupModel {
+    func show(original: String, target: Language, anchor: NSRect, onReplace: (() -> Void)?) -> TranslationPopupModel {
         close()
 
-        let model = TranslationPopupModel(original: original)
+        let model = TranslationPopupModel(original: original, target: target)
         model.onReplace = onReplace
         model.onCopy = { [weak model] in
             guard let model else { return }

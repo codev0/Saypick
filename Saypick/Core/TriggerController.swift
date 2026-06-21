@@ -84,9 +84,9 @@ final class TriggerController {
 
     /// 显示读翻译弹窗并流式填充（供快捷键 / 图标 / 自动模式共用）。
     func presentRead(text: String, element: AXUIElement?, range: CFRange?) {
-        streamTask?.cancel()
         let anchor = PopupPositioner.anchorRect(element: element, range: range)
-        let model = PopupController.shared.show(original: text, anchor: anchor, onReplace: nil)
+        let dir = resolveDirection(text: text, mode: AppSettings.readDirection, isWrite: false)
+        let model = PopupController.shared.show(original: text, target: dir.to, anchor: anchor, onReplace: nil)
         model.onReplace = { [weak model] in
             guard let model, !model.translation.isEmpty else { return }
             Task { @MainActor in
@@ -94,9 +94,53 @@ final class TriggerController {
                 await TextReplacer.replace(with: model.translation, selectAll: false)
             }
         }
+        model.onRetarget = { [weak self, weak model] newTarget in
+            guard let self, let model else { return }
+            model.targetLanguage = newTarget
+            self.runTranslationStream(text: text, from: dir.from, to: newTarget,
+                                      style: AppSettings.readStyle, into: model)
+        }
+        runTranslationStream(text: text, from: dir.from, to: dir.to,
+                             style: AppSettings.readStyle, into: model)
+    }
+
+    // MARK: - 方向决策与共用流式
+
+    /// 按模式决定 from/to。
+    /// - auto：检测选中文字语言；母语→外语、外语→母语、第三种/检测不确定→（读:母语 / 写:外语）。
+    /// - 固定模式：跳过检测，直接用配置好的方向（对中英混排等检测易错场景更稳）。
+    private func resolveDirection(text: String, mode: TranslationDirection, isWrite: Bool) -> (from: Language?, to: Language) {
+        let native = nativeLanguage
+        let foreign = foreignLanguage
+        switch mode {
+        case .nativeToForeign:
+            return (native, foreign)
+        case .foreignToNative:
+            return (foreign, native)
+        case .auto:
+            let detected = Language.detect(in: text)
+            let to: Language
+            if detected == native {
+                to = foreign
+            } else if detected == foreign {
+                to = native
+            } else {
+                to = isWrite ? foreign : native
+            }
+            return (detected, to)
+        }
+    }
+
+    /// 共用的流式翻译，把结果写入弹窗 model（读 / 改写预览 / 弹窗重定向复用）。
+    private func runTranslationStream(text: String, from: Language?, to: Language,
+                                      style: RewriteStyle, into model: TranslationPopupModel) {
+        streamTask?.cancel()
+        model.translation = ""
+        model.isLoading = true
+        model.errorText = nil
         streamTask = Task { @MainActor in
             do {
-                for try await delta in TranslationService.shared.stream(text: text, from: nil, to: nativeLanguage, style: AppSettings.readStyle) {
+                for try await delta in TranslationService.shared.stream(text: text, from: from, to: to, style: style) {
                     if Task.isCancelled { return }
                     model.translation += delta
                     model.isLoading = false
@@ -120,11 +164,12 @@ final class TriggerController {
         rewriteTask = Task { @MainActor in
             guard let cap = await SelectionCapture.captureForRewrite() else { return }
             let style = AppSettings.rewriteStyle
+            let dir = resolveDirection(text: cap.text, mode: AppSettings.rewriteDirection, isWrite: true)
 
             if AppSettings.rewritePreview {
-                // 先预览：弹窗显示译文 + Replace 按钮
+                // 先预览：弹窗显示译文 + Replace 按钮（顶部可改目标语言）
                 let anchor = PopupPositioner.anchorRect(element: cap.element, range: cap.selectedRange)
-                let model = PopupController.shared.show(original: cap.text, anchor: anchor, onReplace: nil)
+                let model = PopupController.shared.show(original: cap.text, target: dir.to, anchor: anchor, onReplace: nil)
                 model.onReplace = { [weak model] in
                     guard let model, !model.translation.isEmpty else { return }
                     Task { @MainActor in
@@ -132,27 +177,21 @@ final class TriggerController {
                         await TextReplacer.replace(with: model.translation, selectAll: cap.isWholeField)
                     }
                 }
-                do {
-                    for try await delta in TranslationService.shared.stream(
-                        text: cap.text, from: nativeLanguage, to: foreignLanguage, style: style) {
-                        if Task.isCancelled { return }
-                        model.translation += delta
-                        model.isLoading = false
-                    }
-                    model.isLoading = false
-                } catch {
-                    model.isLoading = false
-                    model.errorText = (error as? TranslationError)?.errorDescription ?? error.localizedDescription
+                model.onRetarget = { [weak self, weak model] newTarget in
+                    guard let self, let model else { return }
+                    model.targetLanguage = newTarget
+                    self.runTranslationStream(text: cap.text, from: dir.from, to: newTarget, style: style, into: model)
                 }
+                runTranslationStream(text: cap.text, from: dir.from, to: dir.to, style: style, into: model)
             } else {
                 // 直接替换
                 do {
                     let translated = try await TranslationService.shared.translateFully(
-                        text: cap.text, from: nativeLanguage, to: foreignLanguage, style: style)
+                        text: cap.text, from: dir.from, to: dir.to, style: style)
                     await TextReplacer.replace(with: translated, selectAll: cap.isWholeField)
                 } catch {
                     let anchor = PopupPositioner.anchorRect(element: cap.element, range: cap.selectedRange)
-                    let model = PopupController.shared.show(original: cap.text, anchor: anchor, onReplace: nil)
+                    let model = PopupController.shared.show(original: cap.text, target: dir.to, anchor: anchor, onReplace: nil)
                     model.isLoading = false
                     model.errorText = (error as? TranslationError)?.errorDescription ?? error.localizedDescription
                 }
