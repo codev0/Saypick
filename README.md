@@ -60,7 +60,7 @@ Translation runs through a local model (**Ollama**) for full privacy, or any **O
 
 ## 🌍 Languages
 
-Detection and translation cover the 10 most-spoken languages: **English, Chinese, Hindi, Spanish, French, Arabic, Bengali, Russian, Portuguese, Indonesian.** Pick your native language and a target in **Settings → Language**; the read direction is auto-detected.
+Detection and translation cover the 10 most-spoken languages: **English, Chinese, Hindi, Spanish, French, Arabic, Bengali, Russian, Portuguese, Indonesian.** Pick your native and foreign language in **Settings → Language**. Each shortcut (⌥D / ⌥R) has its own direction: **auto** detects the selected text's language and translates the other way, or pin a **fixed** direction for mixed-language text.
 
 ## 🚀 Quick start
 
@@ -76,7 +76,12 @@ ollama serve
 
 **2. Install Saypick**
 
-Download the latest `.dmg` from [Releases](../../releases), drag it to Applications, and launch it.
+With [Homebrew](https://brew.sh) (recommended):
+```bash
+brew install --cask everettjf/saypick/saypick
+```
+
+Or download the latest `.dmg` from [Releases](../../releases), drag it to Applications, and launch it. The build is signed and notarized by Apple.
 
 **3. Grant Accessibility**
 
