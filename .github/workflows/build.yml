@@ -1,0 +1,45 @@
+name: Build Saypick macOS App
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build macOS App
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Resolve Swift Package Dependencies
+        run: |
+          xcodebuild -resolvePackageDependencies -scheme Saypick
+
+      - name: Build Application (Ad-hoc Sign)
+        run: |
+          # Build the Release configuration without requiring official Apple Developer certificates
+          xcodebuild -scheme Saypick \
+            -configuration Release \
+            -derivedDataPath Build/ \
+            -destination "generic/platform=macOS" \
+            CODE_SIGNING_ALLOWED=NO
+
+          # Apply an ad-hoc signature so it can run locally on Apple Silicon and Intel Macs
+          codesign --force --deep --sign - Build/Build/Products/Release/Saypick.app
+
+      - name: Compress App Bundle
+        run: |
+          cd Build/Build/Products/Release
+          zip -r Saypick.zip Saypick.app
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Saypick-macOS-App
+          path: Build/Build/Products/Release/Saypick.zip
+          if-no-files-found: error
